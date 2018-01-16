@@ -5,20 +5,30 @@ const mongoose = require('mongoose');
 const blogPostSchema = mongoose.Schema({
   title: {type: String, required: true},
   content: {type: String, required: true},
-  author: {type: String, required: true},
-  publishDate: Date
+  author: {
+  	firstName: {type: String, required: true},
+  	lastName: {type: String, required: true}
+  },
+  created: Date
 });
 
-blogPostSchema.Schema.methods.serialize = function() {
+
+blogPostSchema.virtual('authorString').get(function () {
+	return `${this.author.firstName} ${this.author.lastName}`.trim();
+});
+
+blogPostSchema.methods.serialize = function() {
 
   return {
-    id: this._id,
+    //id: this._id,
     title: this.title,
     content: this.content,
-    author: this.author,
-    publishDate: this.publishDate
+    author: this.authorString,
+    created: this.created
   };
+
 }
+
 
 const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 
